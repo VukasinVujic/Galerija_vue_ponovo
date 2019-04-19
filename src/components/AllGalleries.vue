@@ -12,7 +12,8 @@
     <form 
       class="form-inline"
       v-if="galleries.length"
-      @submit.prevent="onSearch"           
+       @search="onSearch"
+               
     >
       <input 
         class="form-control" 
@@ -61,6 +62,7 @@
         </div>
       </div>
     </div>
+    <gallery-list :galleries="galleries"></gallery-list>
     
     <app-pagination
       v-if="galleries.length && (page != last_page)"
