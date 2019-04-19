@@ -1,7 +1,6 @@
 <template>
   <div>
-    <h1>All Galleries</h1>
-
+    <h1>{{ !galleries.length ? 'Sorry' : 'All Galleries by ' +  username }}</h1>
     <div 
       class="alert alert-danger"
       v-if="!galleries.length"
@@ -61,7 +60,7 @@
         </div>
       </div>
     </div>
-    
+
     <app-pagination
       v-if="galleries.length && (page != last_page)"
       @loadMore="loadMore"
@@ -82,39 +81,40 @@ export default {
       galleries: [],
       page: 1,
       term: '',
-      last_page: null
+      last_page: null,
+      id: null
     }
   },
   methods: {
-    onSearch() {
-      this.page = 1
-      galleryService.getAll(this.page, this.term)
-      .then(galleries => {
-        this.galleries = galleries.data
-        this.last_page = galleries.last_page
-      })
-    },
     loadMore() {
       this.page++
-      galleryService.getAll(this.page, this.term)
+      galleryService.getUserGalleries(this.id, this.page, this.term)
       .then(galleries => {     
         this.galleries.push(...galleries.data)
         this.last_page = galleries.last_page
       })
+    },
+    onSearch() {
+      this.page = 1
+      galleryService.getUserGalleries(this.id, this.page, this.term)
+      .then(galleries => {
+        this.galleries = galleries.data
+        this.last_page = galleries.last_page
+      })
     }
   },
-  beforeRouteEnter (to, from, next) {
-    galleryService.getAll()
-    .then(galleries => {            
-      next(vm => {
-        vm.galleries = galleries.data
-        vm.last_page = galleries.last_page
-      })
+  computed: {
+    username() {
+      return this.galleries[0].user.first_name + ' ' + this.galleries[0].user.last_name
+    }
+  },
+  created() {
+    this.id = Number(this.$route.params.id)
+    galleryService.getUserGalleries(this.id, this.page, this.term)
+    .then(galleries => { 
+      this.galleries = galleries.data
+      this.last_page = galleries.last_page
     })
   },
 }
 </script>
-
-<style>
-
-</style>

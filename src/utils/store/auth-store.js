@@ -3,7 +3,7 @@ import router from '../../routes'
 
 const getUserFromLS = () => {
     
-    let user = localStorage.getItem('user')
+    const user = localStorage.getItem('user')
     if(user){
         return JSON.parse(user)
     }
@@ -37,6 +37,7 @@ export default {
         logout({ commit }) {
             authService.logout()
             commit('SET_DATA', { user: null })
+            router.push({ name: 'login' })
         },
 
 

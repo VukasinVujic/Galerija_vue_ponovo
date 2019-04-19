@@ -1,7 +1,6 @@
 <template>
   <div>
-    <h1>All Galleries</h1>
-
+    <h1>My Galleries</h1>
     <div 
       class="alert alert-danger"
       v-if="!galleries.length"
@@ -61,7 +60,7 @@
         </div>
       </div>
     </div>
-    
+
     <app-pagination
       v-if="galleries.length && (page != last_page)"
       @loadMore="loadMore"
@@ -72,6 +71,7 @@
 
 <script>
 import galleryService from './../utils/services/gallery-service'
+import { mapGetters } from 'vuex'
 import AppPagination from './partials/AppPagination'
 export default {
   components: {
@@ -86,35 +86,32 @@ export default {
     }
   },
   methods: {
-    onSearch() {
-      this.page = 1
-      galleryService.getAll(this.page, this.term)
-      .then(galleries => {
-        this.galleries = galleries.data
-        this.last_page = galleries.last_page
-      })
-    },
     loadMore() {
       this.page++
-      galleryService.getAll(this.page, this.term)
+      galleryService.getUserGalleries(this.getUser.id, this.page, this.term)
       .then(galleries => {     
         this.galleries.push(...galleries.data)
         this.last_page = galleries.last_page
       })
+    },
+    onSearch() {
+      this.page = 1
+      galleryService.getUserGalleries(this.getUser.id, this.page, this.term)
+      .then(galleries => {
+        this.galleries = galleries.data
+        this.last_page = galleries.last_page
+      })
     }
   },
-  beforeRouteEnter (to, from, next) {
-    galleryService.getAll()
-    .then(galleries => {            
-      next(vm => {
-        vm.galleries = galleries.data
-        vm.last_page = galleries.last_page
-      })
+  computed: {
+    ...mapGetters(['getUser']),
+  },
+  created() {
+    galleryService.getUserGalleries(this.getUser.id, this.page, this.term)
+    .then(galleries => { 
+      this.galleries = galleries.data
+      this.last_page = galleries.last_page
     })
   },
 }
 </script>
-
-<style>
-
-</style>

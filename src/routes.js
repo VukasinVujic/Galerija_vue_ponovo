@@ -4,6 +4,9 @@ import VueRouter from 'vue-router'
 import AppLogin from './components/auth/AppLogin'
 import AppRegister from './components/auth/AppRegister'
 import AllGalleries from './components/AllGalleries'
+import CreateGallery from './components/CreateGallery'
+import MyGalleries from './components/MyGalleries'
+import AuthorGalleries from './components/AuthorGalleries'
 
 Vue.use(VueRouter)
 
@@ -30,6 +33,7 @@ const routes = [
     },
     {
         path: '/authors/:id',
+        component: AuthorGalleries,
         name: 'author',
         meta: {
             auth: true
@@ -37,6 +41,7 @@ const routes = [
     },
     {
         path: '/my-galleries',
+        component: MyGalleries,
         name: 'my-galleries',
         meta: {
             auth: true
@@ -45,6 +50,7 @@ const routes = [
     {
         path: '/create',
         name: 'create-gallery',
+        component: CreateGallery,
         meta: {
             auth: true
         }
