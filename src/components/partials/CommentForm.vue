@@ -8,15 +8,23 @@
           v-model="body"
           @keyup.enter="onSubmit"
           maxlength="1000"
-          required
+          required          
         ></textarea>
+      </div>
+      <div v-if="errors.body">
+        <form-error>{{ errors.body[0]}}</form-error>
       </div>
     </form>
   </div>
 </template>
 
 <script>
+import FormError from './FormError'
 export default {
+  components: {
+    FormError
+  },
+  props: ['errors'],
   data() {
     return {
       body: ''
@@ -24,12 +32,11 @@ export default {
   },
   methods: {
     onSubmit() {
-      this.$emit('submitComment', this.body)
-      this.body = ''
+      if(this.body) {
+        this.$emit('submitComment', this.body)
+        this.body = ''
+      }
     }
   }
 }
 </script>
-
-<style>
-</style>

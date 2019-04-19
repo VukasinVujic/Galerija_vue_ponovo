@@ -6,7 +6,7 @@
       :key="gallery.id"
     >
       <img 
-        :src="gallery.images[0].url" 
+        :src=" gallery.images[0] ? gallery.images[0].url : '' " 
         class="card-img-top" 
         alt="..."
       >

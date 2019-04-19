@@ -12,7 +12,6 @@
 
     <div class="my-carousel">
       <b-carousel id="carousel1"
-        style="text-shadow: 1px 1px 2px #333;"
         controls
         indicators
         background="#ababab"
@@ -36,28 +35,35 @@
     </div>
 
     <div v-if="comments.length">
-      <comment-list :comments="comments"></comment-list>
+      <comment-list
+        :userId="currentUserId"
+        :comments="comments"
+        @removeComment="removeComment"
+      ></comment-list>
     </div>
 
     <comment-form 
-      v-if="userId"
+      v-if="currentUserId"
       @submitComment="submitComment"
+      :errors="errors"
     ></comment-form>
   </div>
 </template>
 
 <script>
 import galleryService from './../utils/services/gallery-service'
+import commentsService from './../utils/services/comments-service'
 import bCarousel from 'bootstrap-vue/es/components/carousel/carousel'
 import bCarouselSlide from 'bootstrap-vue/es/components/carousel/carousel-slide'
 import CommentList from './partials/CommentList'
 import CommentForm from './partials/CommentForm'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     bCarousel,
     bCarouselSlide,
     CommentList,
-    CommentForm
+    CommentForm    
   },
   data() {
     return {
@@ -68,7 +74,8 @@ export default {
       images: [],
       slide: 0,
       sliding: null,
-      comments: []
+      comments: [],
+      errors: []
     }
   },
   methods: {
@@ -79,10 +86,18 @@ export default {
       this.sliding = false
     },
     submitComment(body) {
-      galleryService.addComment(this.id, body)
+      commentsService.addComment(this.id, body)
       .then(comment => {
-        this.comments.push(comment)
+          this.comments.push(comment)
+          this.errors = [] 
       })
+      .catch(errors => {
+        this.errors = errors.response.data.errors
+      })
+    },
+    removeComment(id, index) {
+      this.comments.splice(index, 1)
+      commentsService.removeComment(id)
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -97,6 +112,18 @@ export default {
         vm.comments = gallery.comments
       })
     })
-  } 
+  },
+  computed: {    
+    ...mapGetters({
+      user: 'getUser'
+    }),
+    currentUserId() {
+      if(this.user) {
+        return this.user.id
+      }
+      return 0
+    }
+    
+  }
 }
 </script>

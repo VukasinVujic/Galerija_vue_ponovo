@@ -149,6 +149,6 @@ export default {
         this.gallery.images.splice(index, 1)
       }
     }
-  }
+  },
 }
 </script>

@@ -18,12 +18,6 @@ class GalleryService {
           images
         })
       }
-      addComment(id, body) {
-        return http.post(`galleries/${id}/comments`, { body })
-        .then(({ data }) => data)
-      }
-
-
       getUserGalleries(id, page = 1, term = '') {
         return http.get(`all-galleries/${id}`, {
           params: {
