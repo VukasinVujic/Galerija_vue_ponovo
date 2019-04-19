@@ -20,6 +20,20 @@ const routes = [
         }
     },
     {
+        path: '/my-galleries',
+        name: 'my-galleries',
+        meta: {
+            auth: true
+        }
+    },
+    {
+        path: '/create',
+        name: 'create-gallery',
+        meta: {
+            auth: true
+        }
+    },
+    {
         path: '/register',
         component: AppRegister,
         name: 'register',
@@ -33,5 +47,20 @@ const router = new VueRouter({
     routes,
     mode: 'history'
 })
+
+router.beforeEach((to, from, next) => {
+    const isAuth = !! localStorage.getItem('user')
+
+    if(isAuth && to.meta.guest) {
+        return next({ name: 'home' })
+    }
+
+    if(!isAuth && to.meta.auth) {
+        return next({ name: 'login' })
+    }
+
+    return next()
+})
+
 
 export default router

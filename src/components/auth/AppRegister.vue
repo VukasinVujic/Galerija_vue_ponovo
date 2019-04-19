@@ -9,7 +9,7 @@
                     type="text" 
                     class="form-control" 
                     aria-describedby="emailHelp" 
-                    placeholder="Enter First Name"
+                    placeholder=" First Name"
                     v-model="user.first_name"
                     required
                 >
@@ -24,7 +24,7 @@
                     type="text" 
                     class="form-control" 
                     aria-describedby="emailHelp" 
-                    placeholder="Enter First Name"
+                    placeholder=" First Name"
                     v-model="user.last_name"
                     required
                 >
@@ -39,7 +39,7 @@
                     type="email" 
                     class="form-control" 
                     aria-describedby="emailHelp" 
-                    placeholder="Enter email"
+                    placeholder=" email"
                     v-model="user.email"
                     required
                 >

@@ -31,9 +31,19 @@ class AuthService {
     setAuthHeaders(token) {
         if(!token) {
             delete http.defaults.headers.common['Authorization']
+            return
         }
 
         return http.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    }
+
+    logout() {
+        return http.get('auth/logout')
+        .then(() => {
+            localStorage.removeItem('user')
+            localStorage.removeItem('token')
+            this.setAuthHeaders()
+        })
     }
 
     loggingIn(data) {
@@ -45,7 +55,9 @@ class AuthService {
 
 const checkForToken = (service) => {
     let token = localStorage.getItem('token')
-    service.setAuthHeaders(token)
+    if(token){
+        service.setAuthHeaders(token)
+    }
 }
 
 const authService = new AuthService()
