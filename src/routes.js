@@ -27,11 +27,8 @@ const routes = [
     },
     {
         path: '/galleries/:id',
-        component: ViewGallery,
-        name: 'gallery',
-        meta: {
-            auth: true
-        }
+        component: ViewGallery
+        
     },
     {
         path: '/authors/:id',

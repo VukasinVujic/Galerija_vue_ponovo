@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <h1>{{ gallery.title }}</h1>
@@ -11,29 +10,39 @@
     </router-link>
     <p>{{ gallery.description }}</p>
 
-    <b-carousel id="carousel1"
-      style="text-shadow: 1px 1px 2px #333;"
-      controls
-      indicators
-      background="#ababab"
-      :interval="3000"
-      v-model="slide"
-      @sliding-start="onSlideStart"
-      @sliding-end="onSlideEnd"
-    >
-    <div
-      v-for="(image, index) in images"
-        :key="index"
-    >
-      <a :href="image.url" target="blank">
-        <b-carousel-slide>
-            <img slot="img" class="d-block img-fluid w-100" width="640" height="480"
-             :src="image.url" alt="image slot">
-        </b-carousel-slide>
-      </a>
+    <div class="my-carousel">
+      <b-carousel id="carousel1"
+        style="text-shadow: 1px 1px 2px #333;"
+        controls
+        indicators
+        background="#ababab"
+        :interval="3000"
+        v-model="slide"
+        @sliding-start="onSlideStart"
+        @sliding-end="onSlideEnd"
+      >
+      <div
+        v-for="(image, index) in images"
+          :key="index"
+      >
+        <a :href="image.url" target="blank">
+          <b-carousel-slide>
+              <img slot="img" class="d-block img-fluid w-100" width="640" height="480"
+              :src="image.url" alt="image slot">
+          </b-carousel-slide>
+        </a>
+      </div>
+      </b-carousel>
     </div>
-    </b-carousel>
-    <br>
+
+    <div v-if="comments.length">
+      <comment-list :comments="comments"></comment-list>
+    </div>
+
+    <comment-form 
+      v-if="userId"
+      @submitComment="submitComment"
+    ></comment-form>
   </div>
 </template>
 
@@ -41,10 +50,14 @@
 import galleryService from './../utils/services/gallery-service'
 import bCarousel from 'bootstrap-vue/es/components/carousel/carousel'
 import bCarouselSlide from 'bootstrap-vue/es/components/carousel/carousel-slide'
+import CommentList from './partials/CommentList'
+import CommentForm from './partials/CommentForm'
 export default {
   components: {
     bCarousel,
-    bCarouselSlide
+    bCarouselSlide,
+    CommentList,
+    CommentForm
   },
   data() {
     return {
@@ -54,7 +67,8 @@ export default {
       username: null,
       images: [],
       slide: 0,
-      sliding: null
+      sliding: null,
+      comments: []
     }
   },
   methods: {
@@ -63,6 +77,12 @@ export default {
     },
     onSlideEnd () {
       this.sliding = false
+    },
+    submitComment(body) {
+      galleryService.addComment(this.id, body)
+      .then(comment => {
+        this.comments.push(comment)
+      })
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -74,6 +94,7 @@ export default {
         vm.userId = gallery.user_id
         vm.username = gallery.user.first_name + ' ' + gallery.user.last_name
         vm.images = gallery.images
+        vm.comments = gallery.comments
       })
     })
   } 
