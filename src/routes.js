@@ -3,13 +3,15 @@ import VueRouter from 'vue-router'
 
 import AppLogin from './components/auth/AppLogin'
 import AppRegister from './components/auth/AppRegister'
+import AllGalleries from './components/AllGalleries'
 
 Vue.use(VueRouter)
 
 const routes = [
     {
         path: '/',
-        name: 'home'
+        name: 'home',
+        component: AllGalleries
     },
     {
         path: '/login',
@@ -17,6 +19,20 @@ const routes = [
         name: 'login',
         meta: {
             guest: true
+        }
+    },
+    {
+        path: '/galleries/:id',
+        name: 'gallery',
+        meta: {
+            auth: true
+        }
+    },
+    {
+        path: '/authors/:id',
+        name: 'author',
+        meta: {
+            auth: true
         }
     },
     {

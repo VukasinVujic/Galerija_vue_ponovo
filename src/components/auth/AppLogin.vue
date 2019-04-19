@@ -2,7 +2,7 @@
     <div>
         <h2>Login</h2>
     
-    <form @submit.prevent="submit" >
+    <form @submit.prevent="onSubmit" >
       <div class="form-group">
         <label>Email address</label>
         <input
