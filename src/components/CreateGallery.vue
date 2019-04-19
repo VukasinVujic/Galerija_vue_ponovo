@@ -1,6 +1,6 @@
 <template>
   <div class="create-gallery">
-    <h1>Create Gallery</h1>
+    <h1>{{ editing ? 'Edit Gallery' : 'Create Gallery'}}</h1>
     <form @submit.prevent="onSubmit">
       <div class="form-group">
         <label>Title</label>
@@ -14,7 +14,7 @@
           required
         >
         <div v-if="errors">
-          <form-error v-if="errors.title">{{ errors.title[0] }}</form-error>
+          <form-error v-if="errors.images">At least one image is required.</form-error>
         </div>
       </div>
 

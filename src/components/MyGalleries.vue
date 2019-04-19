@@ -35,8 +35,9 @@
         v-for="gallery in galleries"
         :key="gallery.id"
       >
+          <!-- :src="gallery.images[0].url"  -->
         <img 
-          :src="gallery.images[0].url" 
+          :src=" gallery.images[0] ? gallery.images[0].url : '' "
           class="card-img-top" 
           alt="..."
         >

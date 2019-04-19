@@ -27,6 +27,7 @@ const routes = [
     },
     {
         path: '/galleries/:id',
+        name:"gallery",
         component: ViewGallery
         
     },
