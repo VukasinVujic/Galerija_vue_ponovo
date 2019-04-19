@@ -14,7 +14,7 @@
           required
         >
         <div v-if="errors">
-          <form-error v-if="errors.images">At least one image is required.</form-error>
+          <form-error v-if="errors.title">{{ errors.title[0] }}</form-error>
         </div>
       </div>
 
@@ -45,6 +45,7 @@
         >
         <div v-if="errors">
           <form-error v-if="errors[`images.${index}.url`]">Invalid format.</form-error>
+          <form-error v-if="errors.images">At least one image is required.</form-error>
         </div>
 
         <div class="btn-group">
@@ -87,17 +88,24 @@
         type="submit" 
         class="btn btn-dark"
       >
-        Create
+        {{ editing ? 'Edit' : 'Create'}}
       </button>
 
-      <router-link 
+      <router-link
+        v-if="!editing"
         :to="{ name: 'my-galleries' }"
         class="btn btn-dark"
       >
         Cancel
       </router-link>
+      <router-link 
+        v-else
+        :to="{ name: 'gallery', params: { id: galleryId }}"
+        class="btn btn-dark"
+      >
+        Cancel
+      </router-link>
     </form>
-
   </div>
 </template>
 
@@ -117,18 +125,11 @@ export default {
         images: [{ url: '', order: 1 }]
       },
       errors: {},
+      editing: false,
+      galleryId: null
     }
   },
   methods: {
-    onSubmit() {         
-      galleryService.createGallery(this.gallery)
-      .then(()=> {
-        this.$router.push({ name: 'my-galleries' })
-      })
-      .catch(errors => {
-        this.errors = errors.response.data.errors
-      })
-    },
     addInput() {
       this.range++
       this.gallery.images.push({ url: '', order: this.range })
@@ -148,7 +149,68 @@ export default {
         this.range--
         this.gallery.images.splice(index, 1)
       }
+    },
+    onSubmit() {
+      if(this.editing) {
+        this.editGallery()
+      } else {
+        this.createGallery()
+      }
+    },
+    createGallery() {
+      galleryService.createGallery(this.gallery)
+      .then(()=> {
+        this.errors = {}
+        this.$router.push({ name: 'my-galleries' })
+      })
+      .catch(errors => {
+        this.errors = errors.response.data.errors
+      })
+    },
+    
+    editGallery() {
+      if(this.gallery.user.id == Number(localStorage.getItem('id'))) {
+        galleryService.editGallery(this.galleryId, this.gallery)
+        .then(()=> {
+          this.errors= {}
+          this.$router.push({ name: 'gallery', params: { id: this.galleryId }})
+        })
+        .catch(errors => {
+          this.errors = errors.response.data.errors
+        })
+      }
     }
   },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      if(to.params.id) {
+        vm.galleryId = Number(to.params.id)  
+        vm.editing = true        
+        galleryService.getGallery(vm.galleryId)
+        .then(gallery => {          
+          vm.gallery = gallery
+          vm.range = gallery.images.length
+          if(vm.gallery.user.id != Number(localStorage.getItem('id'))) {
+            vm.$router.push(from)
+          }
+        })
+      }
+    })
+  }
 }
 </script>
+
+<style scoped>
+.create-gallery {
+  max-width: 500px;
+}
+.btn {
+  margin: 0 1rem;
+}
+.btn-group {
+  margin: 0.5rem;
+}
+.btn-group .btn {
+  margin: 0;
+}
+</style>

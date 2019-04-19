@@ -10,6 +10,24 @@
     </router-link>
     <p>{{ gallery.description }}</p>
 
+    <div 
+      class="btn-group"
+      v-if="currentUserId == userId"
+    >
+      <router-link
+        :to="{ name: 'edit', params: { id }}"
+        class="btn btn-dark"
+      >
+        Edit
+      </router-link>
+      <button 
+        class="btn btn-dark"
+        @click="deleteGallery"
+      >
+        Delete
+      </button>
+    </div>
+
     <div class="my-carousel">
       <b-carousel id="carousel1"
         controls
@@ -57,7 +75,6 @@ import bCarousel from 'bootstrap-vue/es/components/carousel/carousel'
 import bCarouselSlide from 'bootstrap-vue/es/components/carousel/carousel-slide'
 import CommentList from './partials/CommentList'
 import CommentForm from './partials/CommentForm'
-import { mapGetters } from 'vuex'
 export default {
   components: {
     bCarousel,
@@ -98,6 +115,16 @@ export default {
     removeComment(id, index) {
       this.comments.splice(index, 1)
       commentsService.removeComment(id)
+    },
+    deleteGallery() {
+      if(this.userId == this.currentUserId) {
+        if(confirm('Are you sure you want to delete this gallery?')){
+          galleryService.deleteGallery(this.id)
+          .then(() => {
+            this.$router.push({ name: 'my-galleries' })
+          })
+        }
+      }
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -114,16 +141,23 @@ export default {
     })
   },
   computed: {    
-    ...mapGetters({
-      user: 'getUser'
-    }),
     currentUserId() {
-      if(this.user) {
-        return this.user.id
-      }
-      return 0
-    }
-    
+      let id = Number(localStorage.getItem('id'))
+      return id ? id : 0
+    }   
   }
 }
 </script>
+
+<style scoped>
+.btn {
+  margin: 1rem 0 !important;
+}
+.router-link {
+  text-decoration: none;
+  color: #212529;
+}
+.router-link:hover {
+  color: #212529;
+}
+</style>
