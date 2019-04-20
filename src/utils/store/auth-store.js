@@ -52,7 +52,7 @@ export default {
     },
     getters: {
         getUser: state => state.user,
-        getErrors: state => state.errors
+        getErrors: state => state.errors,
     },
 
 

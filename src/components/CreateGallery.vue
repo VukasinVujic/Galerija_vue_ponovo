@@ -36,11 +36,16 @@
 
       <div class="form-group" v-for="(n, index) in range" :key="index">
         <label>Image {{ n }} URL</label>
+          
+          <!-- v-model="gallery.images[index].url"
+          type="text" -->
         <input 
-          v-model="gallery.images[index].url"
-          type="text"
+          v-model="images[index].url"
+          type="url"
+
           class="form-control"
           placeholder="Insert URL"
+          pattern="https?://.+(png|jpg|jpeg)"
           required
         >
         <div v-if="errors">
@@ -91,7 +96,7 @@
         {{ editing ? 'Edit' : 'Create'}}
       </button>
 
-      <router-link
+      <!-- <router-link
         v-if="!editing"
         :to="{ name: 'my-galleries' }"
         class="btn btn-dark"
@@ -104,7 +109,14 @@
         class="btn btn-dark"
       >
         Cancel
-      </router-link>
+      </router-link> -->
+      <button
+        type="button"
+        class="btn btn-dark"
+        @click="onCancel">
+        Cancel
+      </button>
+
     </form>
   </div>
 </template>
@@ -122,8 +134,9 @@ export default {
       gallery: {
         title: '',
         description: '',
-        images: [{ url: '', order: 1 }]
+        images: []
       },
+      images: [{ url: ''}],
       errors: {},
       editing: false,
       galleryId: null
@@ -132,29 +145,39 @@ export default {
   methods: {
     addInput() {
       this.range++
-      this.gallery.images.push({ url: '', order: this.range })
+       this.images.push({ url: '' })
     },
     moveUp(index) {
       if(index) {        
-        this.gallery.images.splice( index - 1, 0, this.gallery.images.splice( index, 1 )[0])
+         this.images.splice( index - 1, 0, this.images.splice( index, 1 )[0])
       }
     },
     moveDown(index) {
       if(index != this.range -1 ) {
-        this.gallery.images.splice( index + 1, 0, this.gallery.images.splice( index, 1 )[0])
+       this.images.splice( index + 1, 0, this.images.splice( index, 1 )[0])
       }
     },
     remove(index) {
       if(this.range > 1) {        
         this.range--
-        this.gallery.images.splice(index, 1)
+        this.images.splice(index, 1)
       }
     },
     onSubmit() {
+       if(this.images[0].url) {
+        this.gallery.images = this.images
+      }
       if(this.editing) {
         this.editGallery()
       } else {
         this.createGallery()
+         }      
+    },
+    onCancel() {
+      if(this.editing) {
+        this.$router.push({ name:'gallery', params: { id: this.gallery.id }})
+      } else {
+        this.$router.push({ name: 'my-galleries' })
       }
     },
     createGallery() {
@@ -189,6 +212,7 @@ export default {
         galleryService.getGallery(vm.galleryId)
         .then(gallery => {          
           vm.gallery = gallery
+          vm.images = gallery.images
           vm.range = gallery.images.length
           if(vm.gallery.user.id != Number(localStorage.getItem('id'))) {
             vm.$router.push(from)

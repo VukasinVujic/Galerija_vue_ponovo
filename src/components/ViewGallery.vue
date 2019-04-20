@@ -113,8 +113,10 @@ export default {
       })
     },
     removeComment(id, index) {
-      this.comments.splice(index, 1)
-      commentsService.removeComment(id)
+       if(confirm('Are you sure you want to delete this comment?')) {
+        this.comments.splice(index, 1)
+        commentsService.removeComment(id)
+      }
     },
     deleteGallery() {
       if(this.userId == this.currentUserId) {

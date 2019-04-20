@@ -10,7 +10,6 @@
     </div>
 
     <search-input 
-      v-if="galleries.length"
       @search="onSearch"
     >
     </search-input>

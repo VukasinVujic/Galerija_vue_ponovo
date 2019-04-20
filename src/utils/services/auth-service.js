@@ -42,6 +42,7 @@ class AuthService {
         .then(() => {
             localStorage.removeItem('user')
             localStorage.removeItem('token')
+            localStorage.removeItem('id')
             this.setAuthHeaders()
         })
     }
@@ -49,6 +50,7 @@ class AuthService {
     loggingIn(data) {
         localStorage.setItem('token', data.token)
         localStorage.setItem('user', JSON.stringify(data.user))
+        localStorage.setItem('id', data.user.id)
         this.setAuthHeaders(data.token)
     }
 }

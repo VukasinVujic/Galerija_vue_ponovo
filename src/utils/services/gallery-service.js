@@ -18,6 +18,20 @@ class GalleryService {
           images
         })
       }
+
+      editGallery(id, { title, description, images }) {
+        return http.put(`galleries/${id}`, {
+          title,
+          description,
+          images
+        })
+      }
+    
+      deleteGallery(id) {
+        return http.delete(`galleries/${id}`)
+      }
+
+
       getUserGalleries(id, page = 1, term = '') {
         return http.get(`all-galleries/${id}`, {
           params: {
