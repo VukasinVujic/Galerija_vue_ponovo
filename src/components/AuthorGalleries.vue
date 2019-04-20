@@ -67,8 +67,9 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      let id = Number(localStorage.getItem('id'))
-      vm.id = id ? id : 0
+      // let id = Number(localStorage.getItem('id'))
+      // vm.id = id ? id : 0
+      vm.id = Number(to.params.id)
       galleryService.getUserGalleries(vm.id, vm.page, vm.term)
       .then(galleries => {
         vm.galleries = galleries.data

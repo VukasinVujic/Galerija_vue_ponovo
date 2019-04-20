@@ -36,8 +36,12 @@ export default {
 
         logout({ commit }) {
             authService.logout()
-            commit('SET_DATA', { user: null })
-            router.push({ name: 'login' })
+            // commit('SET_DATA', { user: null })
+            // router.push({ name: 'login' })
+            .then(() => {
+                commit('SET_DATA', { user: null })
+                router.push({ name: 'login' })
+              })
         },
 
 
